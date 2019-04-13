@@ -23,7 +23,7 @@ where T.C2I_Mean > S.C2I_Mean
 /*
 select 	SECTOR_NAME 
 from    tbPCIAssignment
-where   SECTOR_NAME like '%����Ͽ%'; 
+where   SECTOR_NAME like '%三门峡%'; 
 */
 
 /*
@@ -42,10 +42,10 @@ where  HOATT IN (select max(HOATT) AS MAX_HOATT
 order by HOATT desc
 */
 
--- ʹ��between����ѯ
---	����λ��111��112֮�䡢γ��λ��34.7��34.9֮���С��
---		��C2I���ŵľ�ֵ����
---			��С��ID
+-- 使用between语句查询
+--	经度位于111到112之间、纬度位于34.7到34.9之间的小区
+--		的C2I干扰的均值最大的
+--			邻小区ID
 /*	
 with sector_id as (
 					select SECTOR_ID
@@ -74,15 +74,13 @@ where  C2I_Mean in (
 
 */					
 
---ʹ��union����в�ѯ��������Ϊ������Ƶ��Ϊ38544��
--- ����������Ϊ����Ͽ��Ƶ��Ϊ38400��С��
-select SECTOR_ID
- from   dbo.tbCell
- where  CITY = '����' 
- union  
-select SECTOR_ID
- from   dbo.tbCell
- where  CITY = '����Ͽ' and EARFCN = 385400;						
+--使用union语句中查询所属城市为宜阳、频点为38544，
+-- 或所属城市为三门峡、频点为38400的小区
+select SECTOR_ID from  test.dbo.tbCell where  CITY = '宜阳' and EARFCN =38544
+union  
+select SECTOR_ID from   dbo.tbCell where  CITY ='三门峡' and EARFCN = 385400;		
+
+
 /*
 
 */
