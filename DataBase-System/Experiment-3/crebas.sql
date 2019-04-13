@@ -212,26 +212,25 @@ go
 create table tbCell (
    CITY                 nvarchar(255)        null,
    SECTOR_ID            nvarchar(255)         not null,
-   SECTOR_NAME          nvarchar(255)        not null,
-   ENODEBID             int                  not null,
-   ENODEB_NAME          nvarchar(255)        not null,
-   EARFCN               int                  not null,
-   PCI                  smallint                 null
-      constraint CKC_PCI_TBCELL check (PCI is null or (PCI between 0 and 503)),
-   PSS                  int                  null
-      constraint CKC_PSS_TBCELL check (PSS is null or (PSS between 0 and 2)),
-   SSS                  int                  null
-      constraint CKC_SSS_TBCELL check (SSS is null or (SSS between 0 and 167)),
+   SECTOR_NAME          nvarchar(255)        null,
+   ENODEBID             int                   null,
+   ENODEB_NAME          nvarchar(255)         null,
+   EARFCN               int                  null,
+   PCI                  smallint                 null,
+     
+   PSS                  int                  null,
+      
+   SSS                  int                  null,
    TAC                  int                  null,
    VENDOR               nvarchar(255)        null,
-   LONGITUDE            float                not null,
-   LATITUDE             float                not null,
+   LONGITUDE            float                null,
+   LATITUDE             float                 null,
    STYLE                nvarchar(255)        null,
-   AZIMUTH              float                not null,
+   AZIMUTH              float                null,
    HEIGHT               float                null,
    ELECTTILT            float                null,
    MECHTILT             float                null,
-   TOTLETILT            float                not null,
+   TOTLETILT            float                null,
    
       
    constraint PK_TBCELL primary key nonclustered (SECTOR_ID)
