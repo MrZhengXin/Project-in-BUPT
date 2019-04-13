@@ -77,6 +77,7 @@ def conn_test():
 
 conn_test()
 '''
+# 当前的资源记录表
             ('www.baidu.com','A','IN',86400,'111.13.100.91'),
 		    ('www.123.com','A','IN',86400,'61.132.13.130'),
 			('cctv1.net','A','IN',86400,'0.0.0.0') , 
@@ -105,47 +106,6 @@ dns_relay = mysql.connector.connect(
         )
 cursor = dns_relay.cursor()
 
-def getDomainIpMap(QNAME,QTYPE,QCLASS):
-    
-    condition=('SELECT RDATA FROM dnsrr WHERE NAME=%s and TYPE=%s and CLASS=%s')
-    parameter=(QNAME,QTYPE,QCLASS)
-    cursor.execute(condition,parameter)
-    # 目前能查询记录数目>1对应记录的值
-    reply = cursor.fetchall()
-    dns_relay.close()
-    cursor.close()
-    if reply == '0.0.0.0' :
-        print(' Domain does not exist.')
-        # 域名拦截或未找到时，置Feliter=False
-        return 'NULL',False
-    elif len(reply) > 0:
-        return reply,True
-    else:
-        print('Records not found.Sending query to remote server')
-        return 'NULL',False
-        # 远端服务器查询后送回响应包 reponse 
-        # reponse 发送回客户端的同时，将其信息更新至中继服务器数据库  
-        
-    #拆包函数
 
-    #存入数据库    
-# def 
-def view_items():
-    
-    cursor.execute('select *from dnsrr')
-
-    Items = cursor.fetchall()
-    for item in Items:
-        print(item)
 
   
-
-view_items()
-
-reply = getDomainIpMap('cs.vu.nl','MX','IN')
-data = reply[:len(reply)-1]
-print(reply)
-for x in data:
-    print(x)
-
-'''
