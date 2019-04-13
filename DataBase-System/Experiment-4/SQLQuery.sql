@@ -41,8 +41,51 @@ where  HOATT IN (select max(HOATT) AS MAX_HOATT
 				 group  by SSECTOR_ID )
 order by HOATT desc
 */
-		
 
+-- 使用between语句查询
+--	经度位于111到112之间、纬度位于34.7到34.9之间的小区
+--		的C2I干扰的均值最大的
+--			邻小区ID
+/*	
+with sector_id as (
+					select SECTOR_ID
+					from   tbCell
+					where  (LONGITUDE between 111 and 112)
+					and	   (LATITUDE  between 34.7 and 34.9)),
+	 max_c2i  as (
+					select max(C2I_Mean) as max_c2i_mean
+					from   tbC2I
+					where  SCELL IN (
+							select SECTOR_ID
+							from   tbCell
+							where  (LONGITUDE between 111 and 112)
+							and	   (LATITUDE  between 34.7 and 34.9) ) )
+
+select NCELL
+from   tbC2I
+where  C2I_Mean in (
+					select max(C2I_Mean) as max_c2i_mean
+					from   tbC2I
+					where  SCELL IN (
+							select SECTOR_ID
+							from   tbCell
+							where  (LONGITUDE between 111 and 112)
+							and	   (LATITUDE  between 34.7 and 34.9) ) )
+
+*/					
+
+--使用union语句中查询所属城市为宜阳、频点为38544，
+-- 或所属城市为三门峡、频点为38400的小区
+select SECTOR_ID
+ from   dbo.tbCell
+ where  CITY = '宜阳' 
+ union  
+select SECTOR_ID
+ from   dbo.tbCell
+ where  CITY = '三门峡' and EARFCN = 385400;						
+/*
+
+*/
 /*
 
 */	
