@@ -67,7 +67,7 @@ class DNS_DB:
 #数据库连接测试
 def conn_test():
     db = DNS_DB()
-    result = db.getDomainIpMap('cctv1.net','A','IN')      
+    result = db.getDomainIpMap('cs.vu.nl','MX','IN')      
     print(result)
     if  result[-1] == False :
         db._insert_db('cctv1.net','A','IN',86400,'0.0.0.0')
