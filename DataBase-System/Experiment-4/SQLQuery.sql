@@ -280,3 +280,96 @@ select count(N_SECTOR_ID) as num2
 		where S_EARFCN = 38400
 
 */
+
+
+--根据小区/基站工参表和小区切换统计性能表，
+--查询具有  最多二阶邻区数的小区的
+--  最大切换成功次数、相应的切换目标小区ID、尝试切换次数
+
+/*
+select HOSUCC,SCELL, HOATT
+from   tbHandOver
+where  HOSUCC IN( select max(HOSUCC)
+				  from   tbHandOver
+				  where	 SCELL in ( select S_SECTOR_ID 
+									from   tbSecAdjCell
+									group  by S_SECTOR_ID
+									HAVING COUNT(N_SECTOR_ID) >=all( select count(N_SECTOR_ID)
+																     from   tbSecAdjCell
+																     group by S_SECTOR_ID 
+																    )
+									)
+				)
+*/
+
+--根据路测ATU切换统计矩阵表和小区切换统计性能表，删除
+--切换次数 均值小于3的小区切换性能统计数据
+--删除前记得测试
+/*
+delete from  tbHandOver
+where  SCELL IN (
+					select SSECTOR_ID
+					from   tbATUHandOver
+					group by SSECTOR_ID
+					having avg(HOATT) < 3
+				)	
+*/
+
+--向小区/基站工参表中插入一条新信息
+/*
+insert into tbCell
+values (
+		'北京',	50000-0,	'北京-HLHF-1',	124672,	'北京-HLHF',	
+		38400,	40,	2	,5,1200,	'华为',	100.0000,	30.0000,	
+		'宏站',	30,	20,	5,	3,	8)
+
+select *from tbCell
+where  CITY = '北京'
+*/
+
+--将优化小区/保护带小区表中，小区ID为“246506-3”的小区的小区类型改为“优化区”
+
+/*
+update tbOptCell
+set    CELL_TYPE = '优化区'
+where  SECTOR_ID='246506-3'
+
+select SECTOR_ID,CELL_TYPE
+from   tbOptCell
+where  SECTOR_ID='246506-3'
+*/
+
+--用小区PCI优化调整结果表中“优化调整后的本小区PCI值”，
+--替换小区/基站工参表中小区的“物理小区标识”
+/*
+update tbCell 
+set   PCI = case
+			when tbCELL.SECTOR_ID IN (select SECTOR_ID
+									  from   tbPCIAssignment)
+			then ( select PCI
+				   from   tbPCIAssignment
+				   where  tbCell.SECTOR_ID = tbPCIAssignment.SECTOR_ID)
+			else  tbCell.PCI
+			end
+--用来验证结果
+SELECT TOP 10 SECTOR_ID as Assign_id ,PCI
+FROM   tbPCIAssignment
+ORDER BY SECTOR_ID
+
+
+SELECT TOP 150 SECTOR_ID as Cell_id ,PCI
+FROM   tbCell
+ORDER BY SECTOR_ID 
+*/
+
+--针对路测ATU C2I干扰矩阵表表，使用case语句作出如下修改：
+--如果主小区与干扰小区为同站小区且干扰强度排序不小于1，则干扰强度排序减1；
+--如果主小区与干扰小区不为同站，干扰强度排序加1
+/*
+update tbATUC2I
+set RANK = case
+		   when COSITE = 1 and RANK>1 then RANK -1
+		   when COSITE = 0            then RANK +1
+		   
+		   end
+*/
