@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 
-from DNSSocket import Options
+# from DNSSocket import Options
 import mysql.connector
 
 class DNS_DB:
@@ -45,7 +45,7 @@ class DNS_DB:
     
     # 若本地数据库查询失败，将远端服务器返回的响应包中提取所需信息，存入数据库
     # 目前能处理远端服务器发送的一个资源记录
-    def _insert_tb(self,QNAME,QTYPE,QCLASS,TTL,RDATA):
+    def _insert_db(self,QNAME,QTYPE,QCLASS,TTL,RDATA):
         
         try:
             condition=('INSERT INTO dnsrr (NAME,TYPE,CLASS,TTL,RDATA) VALUES(%s,%s,%s,%s,%s)')
@@ -70,7 +70,7 @@ def conn_test():
     result = db.getDomainIpMap('cctv1.net','A','IN')      
     print(result)
     if  result[-1] == False :
-        db._insert_tb('cctv1.net','A','IN',86400,'0.0.0.0')
+        db._insert_db('cctv1.net','A','IN',86400,'0.0.0.0')
     else:
         db._close_db()
     
@@ -105,7 +105,7 @@ dns_relay = mysql.connector.connect(
         database = 'dnsrelay'
         )
 cursor = dns_relay.cursor()
-
+'''
 
 
   
